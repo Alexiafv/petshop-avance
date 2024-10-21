@@ -16,7 +16,6 @@
                             <tr>
                                 <th>Producto</th>
                                 <th>Imagen</th>
-                                <th>Talla</th>
                                 <th>Color</th>
                                 <th>Cantidad</th>
                                 <th>Precio Unitario</th>
@@ -31,7 +30,6 @@
                                     <td>
                                         <img src="<%= producto.urlImagen %>" alt="<%= producto.nombre %>" class="img-thumbnail carrito-img">
                                     </td>
-                                    <td><%= producto.talla || 'No especificada' %></td>
                                     <td><%= producto.color || 'No especificado' %></td>
                                     <td>
                                         <form action="/carrito/update-cantidad" method="POST">
