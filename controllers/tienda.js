@@ -127,3 +127,16 @@ exports.postProductoPalabra = (req, res) => {
     });
     
 }
+
+//controller carrito
+
+exports.getProducto = (req, res, next) => {
+    const productoId = req.params.productoId;
+    Producto.findById(productoId, (producto) => {
+        res.render('tienda/producto-detalle', {
+            producto: producto,
+            pageTitle: producto.nombre,
+            path: '/productos'
+        });
+    });
+};

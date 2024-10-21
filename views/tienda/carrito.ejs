@@ -1,0 +1,88 @@
+<%- include('../includes/head.ejs') %>
+<link rel="stylesheet" href="/css/carrito.css">
+<link rel="stylesheet" href="/css/main.css">
+
+<body>
+    <main>
+        <%- include('../includes/navigation.ejs') %>
+
+        <div class="container carrito-container">
+            <h1>Carrito de compras</h1>
+            
+            <% if (carrito.productos.length > 0) { %>
+                <div class="carrito-detalle">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th>Imagen</th>
+                                <th>Talla</th>
+                                <th>Color</th>
+                                <th>Cantidad</th>
+                                <th>Precio Unitario</th>
+                                <th>Total Parcial</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% carrito.productos.forEach(producto => { %>
+                                <tr>
+                                    <td><%= producto.nombre %></td>
+                                    <td>
+                                        <img src="<%= producto.urlImagen %>" alt="<%= producto.nombre %>" class="img-thumbnail carrito-img">
+                                    </td>
+                                    <td><%= producto.talla || 'No especificada' %></td>
+                                    <td><%= producto.color || 'No especificado' %></td>
+                                    <td>
+                                        <form action="/carrito/update-cantidad" method="POST">
+                                            <input type="hidden" name="productoId" value="<%= producto.id %>">
+                                            <input type="number" name="cantidad" value="<%= producto.cantidad %>" min="1" class="form-control">
+                                            <button type="submit" class="btn btn-secondary mt-2">Actualizar</button>
+                                        </form>
+                                    </td>
+                                    <td>$<%= producto.precio.toFixed(2) %></td>
+                                    <td>$<%= (producto.precio * producto.cantidad).toFixed(2) %></td>
+                                    <td>
+                                        <form action="/carrito/eliminar-producto" method="POST">
+                                            <input type="hidden" name="productoId" value="<%= producto.id %>">
+                                            <button type="submit" class="btn btn-danger">Eliminar</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+
+                    <!-- Resumen del carrito -->
+                    <div class="carrito-resumen">
+                        <h4>Resumen del pedido</h4>
+                        <p>Total de productos: <strong><%= carrito.productos.reduce((acc, prod) => acc + prod.cantidad, 0) %></strong></p>
+                        <p>Subtotal: <strong>$<%= carrito.total.toFixed(2) %></strong></p>
+
+                        <form action="/carrito/calcular-envio" method="POST">
+                            <div class="form-group">
+                                <label for="pais">País:</label>
+                                <input type="text" name="pais" id="pais" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="ciudad">Ciudad:</label>
+                                <input type="text" name="ciudad" id="ciudad" class="form-control" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary mt-3">Calcular Envío</button>
+                        </form>
+
+                        <% if (envio) { %>
+                            <p>Costo de Envío: <strong>$<%= envio %></strong></p>
+                            <p>Total a pagar: <strong>$<%= (carrito.total + envio).toFixed(2) %></strong></p>
+                        <% } %>
+
+                        <a href="/carrito/finalizar-pedido" class="btn btn-success mt-4">Finalizar Compra</a>
+                    </div>
+                </div>
+            <% } else { %>
+                <p>No hay productos en el carrito.</p>
+                <a href="/productos" class="btn btn-primary">Seguir comprando</a>
+            <% } %>
+        </div>
+    </main>
+<%- include('../includes/end.ejs') %>
